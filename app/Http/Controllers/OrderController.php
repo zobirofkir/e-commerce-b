@@ -32,11 +32,11 @@ class OrderController extends Controller
             $request->validated(),
             ["product_id" => $product->id]
         ));
-
-        Mail::to('zobirofkir19@gmail.com')->send(new OrderMail($request->validated()));
+        $orderResource = OrderResource::make($order);    
+        Mail::to('zobirofkir19@gmail.com')->send(new OrderMail($orderResource->toArray($request)));
         return $order;
     }
-
+    
     /**
      * Display the specified resource.
      */

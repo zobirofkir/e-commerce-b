@@ -6,20 +6,20 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderMail extends Mailable
+class OfferMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $order;
+    protected $offer;
 
     /**
      * Create a new message instance.
      *
-     * @param array $order
+     * @param array $offer
      */
-    public function __construct(array $order)
+    public function __construct(array $offer)
     {
-        $this->order = $order;
+        $this->offer = $offer;
     }
 
     /**
@@ -29,8 +29,8 @@ class OrderMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Selected Order')
-                    ->view('emails.order')
-                    ->with('order', $this->order);
+        return $this->subject('Selected offer')
+                    ->view('emails.offer')
+                    ->with('offer', $this->offer);
     }
 }

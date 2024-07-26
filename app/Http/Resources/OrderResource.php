@@ -17,7 +17,9 @@ class OrderResource extends JsonResource
         return [
             "id" => $this->id,
             "product_id" => $this->product_id,
-            'product_name' => $this->product ? $this->product->name : 'Unknown Product', // Handle null product
+            'product_name' => $this->product ? $this->product->name : 'Unknown Product',
+            'product_image' => $this->product ? $this->product->image : 'Unknown Image', 
+            'product_price' => $this->product ? $this->product->price : 'Unknown Price',
             "name" => $this->name,
             "email" => $this->email,
             "address" => $this->address,
