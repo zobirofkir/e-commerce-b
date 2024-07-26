@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Mail\ProductMail;
+use App\Mail\ProductMail; 
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
