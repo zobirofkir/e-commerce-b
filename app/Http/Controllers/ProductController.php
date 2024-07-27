@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Jobs\ProductJob;
 use App\Mail\ProductMail; 
 use App\Models\Product;
 use App\Models\User;
@@ -31,7 +32,7 @@ class ProductController extends Controller
             $request->validated(),
             ['user_id' => $user->id]
         ));
-        Mail::to('zobirofkir19@gmail.com')->send(new ProductMail($request->validated()));
+        ProductJob::dispatch($request->validated());
         return ProductResource::make($product);
     }
 

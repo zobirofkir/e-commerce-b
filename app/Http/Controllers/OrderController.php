@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Jobs\OrderJob;
 use App\Mail\OrderMail;
 use App\Models\Order;
 use App\Models\Product;
@@ -33,7 +34,7 @@ class OrderController extends Controller
             ["product_id" => $product->id]
         ));
         $orderResource = OrderResource::make($order);    
-        Mail::to('zobirofkir19@gmail.com')->send(new OrderMail($orderResource->toArray($request)));
+        OrderJob::dispatch($orderResource->toArray($request));
         return $order;
     }
     

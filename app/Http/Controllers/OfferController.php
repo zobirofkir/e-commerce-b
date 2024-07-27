@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OfferRequet;
 use App\Http\Resources\OfferResource;
+use App\Jobs\OfferJob;
 use App\Mail\OfferMail;
 use App\Models\Offer;
 use App\Models\User;
@@ -31,8 +32,8 @@ class OfferController extends Controller
             $request->validated(),
             ["user_id" => $user->id]
         ));
+        OfferJob::dispatch($request->validated());
         
-        Mail::to('zobirofkir19@gmail.com')->send(new OfferMail($request->validated()));
         return $offer;
     }
 
