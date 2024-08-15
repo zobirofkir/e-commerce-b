@@ -28,14 +28,22 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request, User $user)
     {
+        $imagePath = $request->file('image')->store('images', 'public');
+    
         $product = Product::create(array_merge(
             $request->validated(),
-            ['user_id' => $user->id]
+            [
+                'user_id' => $user->id,
+                'image' => $imagePath,
+            ]
         ));
-        ProductJob::dispatch($request->validated());
+    
+        // Dispatch the job with the necessary data
+        ProductJob::dispatch($product->toArray());
+        
         return ProductResource::make($product);
     }
-
+    
     /**
      * Display the specified resource.
      */
@@ -44,14 +52,19 @@ class ProductController extends Controller
         $user->products->contains($product);
         return ProductResource::make($product);
     }
+
     /**
      * Update the specified resource in storage.
      */
     public function update(ProductRequest $request, User $user, Product $product)
     {
-        $product->update($request->validated());
-    
-        return ProductResource::make($product->refresh());
+        $validated = $request->validated();        
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+            $validated['image'] = $imagePath; // Update the validated data with the new image path
+        }        
+        $product->update($validated);        
+        return new ProductResource($product->refresh());
     }
     
     /**

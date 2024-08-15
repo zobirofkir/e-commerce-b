@@ -18,7 +18,7 @@ class ProductResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "price" => $this->price,
-            "image" => $this->image,
+            "image" => $this->image ? asset('storage/' . $this->image) : null,
             "description" => $this->description,
             "additionalInfo" => $this->additionalInfo,
             "stars" => $this->stars,

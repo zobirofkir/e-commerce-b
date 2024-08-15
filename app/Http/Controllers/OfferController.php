@@ -1,15 +1,13 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OfferRequet;
 use App\Http\Resources\OfferResource;
 use App\Jobs\OfferJob;
-use App\Mail\OfferMail;
 use App\Models\Offer;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class OfferController extends Controller
 {
@@ -28,15 +26,24 @@ class OfferController extends Controller
      */
     public function store(OfferRequet $request, User $user)
     {
-        $offer = Offer::create(array_merge(
-            $request->validated(),
-            ["user_id" => $user->id]
-        ));
-        OfferJob::dispatch($request->validated());
-        
-        return $offer;
-    }
+        $validated = $request->validated();
 
+        $imagePath = $request->file('image')->store('images', 'public');
+
+        // Create the offer with image path
+        $offer = Offer::create(array_merge(
+            $validated,
+            [
+                'user_id' => $user->id, 
+                'image' => $imagePath
+            ]
+        ));
+
+        OfferJob::dispatch($offer);
+
+        return new OfferResource($offer);
+    }
+    
     /**
      * Display the specified resource.
      */
@@ -49,21 +56,29 @@ class OfferController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(OfferRequet $request, User $user , Offer $offer)
+    public function update(OfferRequet $request, User $user, Offer $offer)
     {
         $user->offers->contains($offer);
+
+        // Handle the file upload
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+            $request->merge(['image' => $imagePath]); // Update the image path in the request
+        }
+
+        // Update the offer with new data
         $offer->update($request->validated());
-        return OfferResource::make(
-            $offer->refresh()
-        );
+
+        return new OfferResource($offer->refresh());
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user , Offer $offer)
+    public function destroy(User $user, Offer $offer)
     {
         $user->offers->contains($offer);
-        return $offer->delete();
+        $offer->delete();
+        return response()->json(['message' => 'Offer deleted successfully'], 200);
     }
 }

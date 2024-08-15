@@ -25,7 +25,7 @@ class OfferRequet extends FormRequest
             "name" => "required|string|min:5",
             "discount" => "required|string",
             "description" => "required|string",
-            "image" => "required|string",
+            "image" => "required|image|mimes:jpeg,png,jpg,gif|max:2048",
         ];
     }
 }

@@ -19,7 +19,7 @@ class OfferResource extends JsonResource
             "name" => $this->name,
             "discount" => $this->discount,
             "description" => $this->description,
-            "image" => $this->image,
+            "image" => $this->image ? asset('storage/' . $this->image) : null,
         ];
     }
 }
